@@ -1,0 +1,16 @@
+default_velocity_scaling_factor: 0.3
+default_acceleration_scaling_factor: 0.1
+
+joint_limits:
+  fr1_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  fr2_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  fr3_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  fl1_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  fl2_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  fl3_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  rr1_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  rr2_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  rr3_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  rl1_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  rl2_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}
+  rl3_joint: {has_velocity_limits: true, max_velocity: 2.5, has_acceleration_limits: true, max_acceleration: 5.0}

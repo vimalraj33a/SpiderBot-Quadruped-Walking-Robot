@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<robot name="spiderbot">
+  <group name="fr_leg">
+    <joint name="fr1_joint"/><joint name="fr2_joint"/>
+  </group>
+  <group name="fl_leg">
+    <joint name="fl1_joint"/><joint name="fl2_joint"/>
+  </group>
+  <group name="rr_leg">
+    <joint name="rr1_joint"/><joint name="rr2_joint"/>
+  </group>
+  <group name="rl_leg">
+    <joint name="rl1_joint"/><joint name="rl2_joint"/>
+  </group>
+  <group name="all_legs">
+    <joint name="fr1_joint"/><joint name="fr2_joint"/>
+    <joint name="fl1_joint"/><joint name="fl2_joint"/>
+    <joint name="rr1_joint"/><joint name="rr2_joint"/>
+    <joint name="rl1_joint"/><joint name="rl2_joint"/>
+  </group>
+  <group_state name="stand" group="all_legs">
+    <joint name="fr1_joint" value="0.0"/><joint name="fr2_joint" value="0.0"/>
+    <joint name="fl1_joint" value="0.0"/><joint name="fl2_joint" value="0.0"/>
+    <joint name="rr1_joint" value="0.0"/><joint name="rr2_joint" value="0.0"/>
+    <joint name="rl1_joint" value="0.0"/><joint name="rl2_joint" value="0.0"/>
+  </group_state>
+  <disable_collisions link1="base_link" link2="fr_coxa" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="fl_coxa" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="rr_coxa" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="rl_coxa" reason="Adjacent"/>
+  <disable_collisions link1="fr_coxa"   link2="fr_tibia" reason="Adjacent"/>
+  <disable_collisions link1="fl_coxa"   link2="fl_tibia" reason="Adjacent"/>
+  <disable_collisions link1="rr_coxa"   link2="rr_tibia" reason="Adjacent"/>
+  <disable_collisions link1="rl_coxa"   link2="rl_tibia" reason="Adjacent"/>
+  <disable_collisions link1="fr_tibia"  link2="fr_foot"  reason="Adjacent"/>
+  <disable_collisions link1="fl_tibia"  link2="fl_foot"  reason="Adjacent"/>
+  <disable_collisions link1="rr_tibia"  link2="rr_foot"  reason="Adjacent"/>
+  <disable_collisions link1="rl_tibia"  link2="rl_foot"  reason="Adjacent"/>
+  <disable_collisions link1="fr_coxa"   link2="fl_coxa"  reason="Never"/>
+  <disable_collisions link1="fr_coxa"   link2="rr_coxa"  reason="Never"/>
+  <disable_collisions link1="fr_coxa"   link2="rl_coxa"  reason="Never"/>
+  <disable_collisions link1="fl_coxa"   link2="rr_coxa"  reason="Never"/>
+  <disable_collisions link1="fl_coxa"   link2="rl_coxa"  reason="Never"/>
+  <disable_collisions link1="rr_coxa"   link2="rl_coxa"  reason="Never"/>
+</robot>

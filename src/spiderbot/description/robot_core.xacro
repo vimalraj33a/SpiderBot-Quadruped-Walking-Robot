@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="inertial_macros.xacro"/>
+  <xacro:arg name="controllers_yaml" default=""/>
+
+  <xacro:property name="damp"      value="1.0"/>
+  <xacro:property name="fric"      value="1.0"/>
+  <xacro:property name="mu"        value="50.0"/>
+  <xacro:property name="kp"        value="100000"/>
+  <xacro:property name="kd"        value="1.0"/>
+  <xacro:property name="bx"        value="0.110"/>
+  <xacro:property name="by"        value="0.110"/>
+  <xacro:property name="bz"        value="0.028"/>
+  <xacro:property name="coxa_len"  value="0.060"/>
+  <xacro:property name="coxa_r"    value="0.009"/>
+  <xacro:property name="tibia_len" value="0.110"/>
+  <xacro:property name="tibia_r"   value="0.009"/>
+  <xacro:property name="foot_r"    value="0.014"/>
+
+  <material name="mat_blue">  <color rgba="0.10 0.35 0.85 1.0"/> </material>
+  <material name="mat_red">   <color rgba="0.85 0.12 0.10 1.0"/> </material>
+  <material name="mat_white"> <color rgba="0.90 0.90 0.90 1.0"/> </material>
+  <material name="mat_black"> <color rgba="0.05 0.05 0.05 1.0"/> </material>
+
+  <!-- BASE -->
+  <link name="base_link">
+    <xacro:inertial_box mass="0.500" x="${bx}" y="${by}" z="${bz}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:inertial_box>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="${bx} ${by} ${bz}"/></geometry>
+      <material name="mat_blue"/>
+    </visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="${bx} ${by} ${bz}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="base_link"><material>Gazebo/Blue</material>
+    <mu1>${mu}</mu1><mu2>${mu}</mu2><dampingFactor>0.2</dampingFactor>
+  </gazebo>
+
+  <!-- ══════ FR LEG ══════ -->
+  <joint name="fr1_joint" type="revolute">
+    <parent link="base_link"/><child link="fr_coxa"/>
+    <origin xyz="0.055 0.055 0" rpy="0 0 0.785"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="fr_coxa">
+    <xacro:inertial_cylinder mass="0.020" length="${coxa_len}" radius="${coxa_r}">
+      <origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+      <material name="mat_red"/>
+    </visual>
+    <collision><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="fr_coxa"><material>Gazebo/Red</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="fr2_joint" type="revolute">
+    <parent link="fr_coxa"/><child link="fr_tibia"/>
+    <origin xyz="${coxa_len} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="fr_tibia">
+    <xacro:inertial_cylinder mass="0.015" length="${tibia_len}" radius="${tibia_r}">
+      <origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+      <material name="mat_white"/>
+    </visual>
+    <collision><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="fr_tibia"><material>Gazebo/White</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="fr_foot_joint" type="fixed">
+    <parent link="fr_tibia"/><child link="fr_foot"/>
+    <origin xyz="0 0 ${-tibia_len}" rpy="0 0 0"/>
+  </joint>
+  <link name="fr_foot">
+    <xacro:inertial_sphere mass="0.005" radius="${foot_r}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:inertial_sphere>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${foot_r}"/></geometry><material name="mat_black"/>
+    </visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${foot_r}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="fr_foot"><material>Gazebo/Black</material>
+    <mu1>200.0</mu1><mu2>200.0</mu2><kp>${kp}</kp><kd>${kd}</kd>
+    <minDepth>0.001</minDepth><maxVel>0.01</maxVel>
+  </gazebo>
+
+  <!-- ══════ FL LEG ══════ -->
+  <joint name="fl1_joint" type="revolute">
+    <parent link="base_link"/><child link="fl_coxa"/>
+    <origin xyz="-0.055 0.055 0" rpy="0 0 2.356"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="fl_coxa">
+    <xacro:inertial_cylinder mass="0.020" length="${coxa_len}" radius="${coxa_r}">
+      <origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+      <material name="mat_red"/>
+    </visual>
+    <collision><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="fl_coxa"><material>Gazebo/Red</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="fl2_joint" type="revolute">
+    <parent link="fl_coxa"/><child link="fl_tibia"/>
+    <origin xyz="${coxa_len} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="fl_tibia">
+    <xacro:inertial_cylinder mass="0.015" length="${tibia_len}" radius="${tibia_r}">
+      <origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+      <material name="mat_white"/>
+    </visual>
+    <collision><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="fl_tibia"><material>Gazebo/White</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="fl_foot_joint" type="fixed">
+    <parent link="fl_tibia"/><child link="fl_foot"/>
+    <origin xyz="0 0 ${-tibia_len}" rpy="0 0 0"/>
+  </joint>
+  <link name="fl_foot">
+    <xacro:inertial_sphere mass="0.005" radius="${foot_r}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:inertial_sphere>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${foot_r}"/></geometry><material name="mat_black"/>
+    </visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0">
+      </origin><geometry><sphere radius="${foot_r}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="fl_foot"><material>Gazebo/Black</material>
+    <mu1>200.0</mu1><mu2>200.0</mu2><kp>${kp}</kp><kd>${kd}</kd>
+    <minDepth>0.001</minDepth><maxVel>0.01</maxVel>
+  </gazebo>
+
+  <!-- ══════ RR LEG ══════ -->
+  <joint name="rr1_joint" type="revolute">
+    <parent link="base_link"/><child link="rr_coxa"/>
+    <origin xyz="0.055 -0.055 0" rpy="0 0 -0.785"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="rr_coxa">
+    <xacro:inertial_cylinder mass="0.020" length="${coxa_len}" radius="${coxa_r}">
+      <origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+      <material name="mat_red"/>
+    </visual>
+    <collision><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="rr_coxa"><material>Gazebo/Red</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="rr2_joint" type="revolute">
+    <parent link="rr_coxa"/><child link="rr_tibia"/>
+    <origin xyz="${coxa_len} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="rr_tibia">
+    <xacro:inertial_cylinder mass="0.015" length="${tibia_len}" radius="${tibia_r}">
+      <origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+      <material name="mat_white"/>
+    </visual>
+    <collision><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="rr_tibia"><material>Gazebo/White</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="rr_foot_joint" type="fixed">
+    <parent link="rr_tibia"/><child link="rr_foot"/>
+    <origin xyz="0 0 ${-tibia_len}" rpy="0 0 0"/>
+  </joint>
+  <link name="rr_foot">
+    <xacro:inertial_sphere mass="0.005" radius="${foot_r}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:inertial_sphere>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${foot_r}"/></geometry><material name="mat_black"/>
+    </visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0">
+      </origin><geometry><sphere radius="${foot_r}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="rr_foot"><material>Gazebo/Black</material>
+    <mu1>200.0</mu1><mu2>200.0</mu2><kp>${kp}</kp><kd>${kd}</kd>
+    <minDepth>0.001</minDepth><maxVel>0.01</maxVel>
+  </gazebo>
+
+  <!-- ══════ RL LEG ══════ -->
+  <joint name="rl1_joint" type="revolute">
+    <parent link="base_link"/><child link="rl_coxa"/>
+    <origin xyz="-0.055 -0.055 0" rpy="0 0 -2.356"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="rl_coxa">
+    <xacro:inertial_cylinder mass="0.020" length="${coxa_len}" radius="${coxa_r}">
+      <origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+      <material name="mat_red"/>
+    </visual>
+    <collision><origin xyz="${coxa_len/2} 0 0" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${coxa_r}" length="${coxa_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="rl_coxa"><material>Gazebo/Red</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="rl2_joint" type="revolute">
+    <parent link="rl_coxa"/><child link="rl_tibia"/>
+    <origin xyz="${coxa_len} 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
+    <dynamics damping="${damp}" friction="${fric}"/>
+  </joint>
+  <link name="rl_tibia">
+    <xacro:inertial_cylinder mass="0.015" length="${tibia_len}" radius="${tibia_r}">
+      <origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+    </xacro:inertial_cylinder>
+    <visual><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+      <material name="mat_white"/>
+    </visual>
+    <collision><origin xyz="0 0 ${-tibia_len/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${tibia_r}" length="${tibia_len}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="rl_tibia"><material>Gazebo/White</material><mu1>${mu}</mu1><mu2>${mu}</mu2></gazebo>
+
+  <joint name="rl_foot_joint" type="fixed">
+    <parent link="rl_tibia"/><child link="rl_foot"/>
+    <origin xyz="0 0 ${-tibia_len}" rpy="0 0 0"/>
+  </joint>
+  <link name="rl_foot">
+    <xacro:inertial_sphere mass="0.005" radius="${foot_r}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:inertial_sphere>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="${foot_r}"/></geometry><material name="mat_black"/>
+    </visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0">
+      </origin><geometry><sphere radius="${foot_r}"/></geometry>
+    </collision>
+  </link>
+  <gazebo reference="rl_foot"><material>Gazebo/Black</material>
+    <mu1>200.0</mu1><mu2>200.0</mu2><kp>${kp}</kp><kd>${kd}</kd>
+    <minDepth>0.001</minDepth><maxVel>0.01</maxVel>
+  </gazebo>
+
+  <!-- ══════ ROS2 CONTROL ══════ -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware><plugin>gazebo_ros2_control/GazeboSystem</plugin></hardware>
+    <joint name="fr1_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="fr2_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="fl1_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="fl2_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rr1_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rr2_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rl1_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rl2_joint">
+      <command_interface name="position"><param name="min">-1.57</param><param name="max">1.57</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- ══════ GAZEBO PLUGIN ══════ -->
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(arg controllers_yaml)</parameters>
+      <ros><namespace>/</namespace></ros>
+    </plugin>
+  </gazebo>
+
+</robot>

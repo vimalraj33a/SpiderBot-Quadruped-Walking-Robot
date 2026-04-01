@@ -1,0 +1,30 @@
+# spider_robot/config/hardware_bridge.yaml
+# ==========================================
+# All parameters for the hardware_bridge.py node.
+# Pass via: ros2 run spider_robot hardware_bridge.py --ros-args --params-file config/hardware_bridge.yaml
+
+spider_robot_hardware_bridge:
+  ros__parameters:
+
+    # USB serial port connected to ESP32
+    # Run: ls /dev/ttyUSB* or ls /dev/ttyACM* to find your port
+    port: "/dev/ttyUSB0"
+
+    # Baud rate — must match Arduino Serial.begin(115200)
+    baud: 115200
+
+    # How many times per second to send angles to the robot
+    # 20Hz is smooth enough; lower if serial is getting congested
+    publish_rate_hz: 20.0
+
+    # dry_run: true = log angles to terminal but do NOT send to hardware
+    # Use this to test without the robot connected
+    dry_run: false
+
+    # Per-servo inversion flags
+    # Set true if a servo rotates in the WRONG direction
+    # (common when servos on opposite sides are mirror-mounted)
+    invert_fr1: false
+    invert_fl1: false
+    invert_rr1: false
+    invert_rl1: false

@@ -1,0 +1,16 @@
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+moveit_simple_controller_manager:
+  controller_names: [joint_trajectory_controller]
+  joint_trajectory_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - fr1_joint
+      - fr2_joint
+      - fl1_joint
+      - fl2_joint
+      - rr1_joint
+      - rr2_joint
+      - rl1_joint
+      - rl2_joint

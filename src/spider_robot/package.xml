@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>spider_robot</name>
+  <version>1.0.0</version>
+  <description>
+    Hardware bridge for SpiderBot quadruped robot.
+    Mirrors Gazebo / MoveIt joint commands to real ESP32 hardware
+    via USB serial → PCA9685 → 8 servo motors.
+    Workspace: spiderrobot_ws
+  </description>
+
+  <maintainer email="you@example.com">Vimalraj</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>joint_state_broadcaster</depend>
+  <depend>joint_trajectory_controller</depend>
+  <depend>spiderbot</depend>
+
+  <exec_depend>python3-serial</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
